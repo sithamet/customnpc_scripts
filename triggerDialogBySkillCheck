@@ -1,0 +1,93 @@
+var PLAYER;
+var EVENT;
+var SCOREBOARD;
+
+
+
+function target(e) {
+    PLAYER = e.entity;
+    EVENT = e;
+    SCOREBOARD = e.npc.world.getScoreboard();
+
+    startDialogAfterCheck("Техника", 5, 150, "@p дурачок и @result");
+   
+}
+
+function startDialogAfterCheck(skillName, target, dialogID, publicMessage) {
+
+    var id = skillName + target + dialogID;
+
+    var base = PLAYER.getFactionPoints(15);
+    var roll = rollDice(20);
+    var final = base + roll;
+    var result = "";
+    var passed = false;
+
+    if (final >= target) {
+        result = "&eпроходит проверку&r";
+        passed = true;
+
+        if (!SCOREBOARD.hasObjective(id)) {
+            SCOREBOARD.addObjective(id, "dummy");
+        }
+
+        SCOREBOARD.getObjective(id).createScore(PLAYER.getDisplayName()).setValue(1);
+
+    } else {
+        result = "&cпроваливает проверку&r";
+    }
+
+
+    EVENT.npc.say("&b" + PLAYER.getDisplayName() + "&r " + result + ": " + final + "(" + roll + "+" + 
+    base + ")" + " из " + target);
+
+    if (!PLAYER.hasReadDialog(dialogID) && passed) {
+        PLAYER.showDialog(dialogID, " ");
+    }
+
+}
+
+var SKILL_IDS = {
+    FITNESS: 10,
+    PERCEPTION: 11,
+    AGILITY: 12,
+    COORDINATION: 13,
+    INGENUITY: 14,
+    TECH: 15,
+    MAGIC: 16,
+    CHARISMA: 17,
+    COMPOSURE: 18
+}
+
+var SKILL_NAMES = {
+    "Тренированность": 10,
+    "Восприятие": 11,
+    "Проворство": 12,
+    "Координация": 13,
+    "Изобретательность": 14,
+    "Техника": 15,
+    "Магия": 16,
+    "Обаяние": 17,
+    "Самообладание": 18
+}
+
+var SKILL_NAMES_POS = {
+    "Тренированности": 10,
+    "Восприятия": 11,
+    "Проворства": 12,
+    "Координации": 13,
+    "Изобретательности": 14,
+    "Техники": 15,
+    "Магияи": 16,
+    "Обаяния": 17,
+    "Самообладания": 18
+}
+
+function rollDice(size) {
+    return Math.floor(Math.random() * size) + 1;
+}
+    
+
+
+
+
